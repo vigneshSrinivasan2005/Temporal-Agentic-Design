@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "temporal-agentic-design"
+version = "0.1.0"
+description = "Scalable Temporal-orchestrated Healthcare De-identification Pipeline, DuckDB Storage, MCP Servers, and Agentic Debugger"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "temporalio>=1.7.0",
+    "opentelemetry-api>=1.24.0",
+    "opentelemetry-sdk>=1.24.0",
+    "duckdb>=1.1.0",
+    "pyarrow>=15.0.0",
+    "pandas>=2.2.0",
+    "pydantic>=2.6.0",
+    "requests>=2.31.0",
+    "streamlit>=1.35.0",
+    "fastmcp>=0.1.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+    "types-requests>=2.31.0",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501", "E402", "F841"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true

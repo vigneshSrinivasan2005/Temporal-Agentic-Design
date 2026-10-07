@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: temporal-pipeline-config
+  namespace: default
+data:
+  TEMPORAL_HOST: "temporal-frontend.temporal.svc.cluster.local:7233"
+  TEMPORAL_NAMESPACE: "default"
+  DATA_PIPELINE_TASK_QUEUE: "clinical-deid-pipeline-queue"
+  AGENT_TASK_QUEUE: "debugger-agent-queue"
+  OLLAMA_BASE_URL: "http://ollama-service.default.svc.cluster.local:11434/v1"
+  OLLAMA_MODEL: "llama3.2"

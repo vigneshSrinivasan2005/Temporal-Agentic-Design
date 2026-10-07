@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Ruff Linter
+        run: |
+          ruff check .
+
+      - name: Run Ruff Format Check
+        run: |
+          ruff format --check .
+
+      - name: Run Mypy Type Checker
+        run: |
+          mypy --ignore-missing-imports common/
+          mypy --ignore-missing-imports "Mock-Data-Pipeline"/*.py
+          mypy --ignore-missing-imports "Output Aligned Queryable Data"/*.py
+          mypy --ignore-missing-imports "Tracing MCP"/tracing_server.py
+          mypy --ignore-missing-imports "Query Normalized Output MCP"/query_server.py
+          mypy --ignore-missing-imports "Debugger Agent"/*.py
+
+      - name: Run Pytest Suite
+        run: |
+          pytest -v tests/

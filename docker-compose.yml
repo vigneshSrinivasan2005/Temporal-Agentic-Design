@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  temporal:
+    image: temporalio/auto-setup:latest
+    container_name: temporal-server
+    ports:
+      - "7233:7233"
+      - "8233:8233"
+    environment:
+      - DB=sqlite
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development-sql.yaml
+    healthcheck:
+      test: ["CMD", "tctl", "cluster", "health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  pipeline-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    environment:
+      - TEMPORAL_HOST=temporal:7233
+      - TEMPORAL_NAMESPACE=default
+    volumes:
+      - shared-data:/app/Output Aligned Queryable Data
+      - shared-traces:/app/Generated Traces
+    depends_on:
+      temporal:
+        condition: service_healthy
+
+  debugger-agent-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    ports:
+      - "8501:8501"
+    environment:
+      - TEMPORAL_HOST=temporal:7233
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434/v1
+    volumes:
+      - shared-data:/app/Output Aligned Queryable Data
+      - shared-traces:/app/Generated Traces
+    depends_on:
+      - pipeline-worker
+
+volumes:
+  shared-data:
+  shared-traces:

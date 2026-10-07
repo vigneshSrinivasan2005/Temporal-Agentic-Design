@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+
+# Testing & Linting
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# DuckDB & Parquet Data files
+*.duckdb
+*.duckdb.wal
+*.parquet
+
+# Kaggle raw downloaded CSVs & zips
+*.zip
+Input Data Format 1/*.csv
+Input Data Format 2/*.csv
+!Input Data Format 1/.gitkeep
+!Input Data Format 2/.gitkeep
+
+# Traces generated at runtime
+Generated Traces/*.json
+!Generated Traces/.gitkeep
+
+# Environment & Secrets
+.env
+.env.local
+.DS_Store
