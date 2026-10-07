@@ -8,11 +8,9 @@ and encounters.csv into 'Input Data Format 2/'.
 """
 
 import argparse
-import io
 import os
 import shutil
 import subprocess
-import sys
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -25,21 +23,19 @@ TEMP_DOWNLOAD_DIR = BASE_DIR / ".download_temp"
 KAGGLE_DATASET = "cpluzsh/synthea-synthetic-health-data"
 SYNTHEA_DIRECT_URL = "https://raw.githubusercontent.com/synthetichealth/synthea-sample-data/main/downloads/synthea_sample_data_csv_apr2020.zip"
 
+
 def check_kaggle_credentials() -> bool:
     kaggle_json = Path.home() / ".kaggle" / "kaggle.json"
     env_creds = os.getenv("KAGGLE_USERNAME") and os.getenv("KAGGLE_KEY")
     return kaggle_json.exists() or bool(env_creds)
 
+
 def download_via_kaggle(dataset: str):
     print(f"[*] Downloading dataset '{dataset}' via Kaggle CLI...")
     TEMP_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    cmd = [
-        "kaggle", "datasets", "download",
-        "-d", dataset,
-        "-p", str(TEMP_DOWNLOAD_DIR),
-        "--unzip"
-    ]
+    cmd = ["kaggle", "datasets", "download", "-d", dataset, "-p", str(TEMP_DOWNLOAD_DIR), "--unzip"]
     subprocess.run(cmd, check=True)
+
 
 def download_via_direct_url(url: str):
     print(f"[*] Downloading official Synthea clinical dataset from mirror: {url}...")
@@ -50,10 +46,13 @@ def download_via_direct_url(url: str):
     with zipfile.ZipFile(zip_path, "r") as z:
         z.extractall(TEMP_DOWNLOAD_DIR)
 
+
 def organize_files():
     print("[*] Organizing files into Input Data Format directories...")
     found_patients = list(TEMP_DOWNLOAD_DIR.rglob("patients.csv")) or list(TEMP_DOWNLOAD_DIR.rglob("*patient*.csv"))
-    found_encounters = list(TEMP_DOWNLOAD_DIR.rglob("encounters.csv")) or list(TEMP_DOWNLOAD_DIR.rglob("*encounter*.csv"))
+    found_encounters = list(TEMP_DOWNLOAD_DIR.rglob("encounters.csv")) or list(
+        TEMP_DOWNLOAD_DIR.rglob("*encounter*.csv")
+    )
 
     if found_patients:
         src = found_patients[0]
@@ -74,6 +73,7 @@ def organize_files():
     # Cleanup temp
     shutil.rmtree(TEMP_DOWNLOAD_DIR, ignore_errors=True)
 
+
 def main():
     parser = argparse.ArgumentParser(description="Download clinical datasets for Temporal Agentic Pipeline.")
     parser.add_argument("--dataset", default=KAGGLE_DATASET, help="Kaggle dataset handle")
@@ -93,6 +93,7 @@ def main():
 
     organize_files()
     print("[+] Done! Input data directories are ready.")
+
 
 if __name__ == "__main__":
     main()
